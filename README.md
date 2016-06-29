@@ -1,3 +1,5 @@
+# uncledb
+从前辈那里fork,因为需要修改源码来完成自己的定制化需求,所以自己发布了bower包,命名为  angular-multiple-select-db
 # angularMultipleSelect
 A complete Angularjs directive for multiple select autocomplete
 
