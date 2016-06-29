@@ -1,6 +1,6 @@
 {
-  "name": "angular-multiple-select",
-  "version": "v1.1.1",
+  "name": "angular-multiple-select-db",
+  "version": "v1.0.0",
   "description": "A complete Angularjs directive for multiple selection with suggestion list, like skills, locations etc.",
   "main": [
     "build/multiple-select.min.js",
@@ -11,11 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jagdeepsingh91/angularMultipleSelect.git"
+    "url": "git@github.com:uncledb/angularMultipleSelect.git"
   },
   "keywords": [
     "angular",
-    "angular multiple select",
     "multiple",
     "select",
     "angular",
@@ -32,6 +31,7 @@
   },
   "homepage": "https://github.com/jagdeepsingh91/angularMultipleSelect#readme",
   "dependencies": {
+    "angular-multiple-select": "^1.1.1",
     "bower": "^1.7.0",
     "browser-sync": "^2.10.0",
     "event-stream": "^3.3.2",
