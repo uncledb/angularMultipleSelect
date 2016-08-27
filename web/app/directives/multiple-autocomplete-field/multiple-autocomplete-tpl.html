@@ -1,8 +1,22 @@
 <div class="ng-ms form-item-container">
     <ul class="list-inline">
-        <li ng-repeat="item in modelArr">
+        <li ng-if="isSingleChoose && modelArr">
+            <span ng-if="objectProperty == undefined || objectProperty == ''">
+				{{modelArr}}
+                <span class="remove" ng-click="removeAddedValues(modelArr)">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </span>&nbsp;
+			</span>
+            <span ng-if="objectProperty != undefined && objectProperty != '' && modelArr[objectProperty]">
+				{{modelArr[objectProperty]}} {{repeatArr && (repeatArr.indexOf(modelArr[objectProperty]) !== -1 ? '(' + (modelArr[remarkProperty] || '无') + ')' : '' ) }}
+                <span class="remove" ng-click="removeAddedValues(modelArr)">
+                     <i class="glyphicon glyphicon-remove"></i>
+                </span>&nbsp;
+			</span>
+        </li>
+        <li ng-if="!isSingleChoose && modelArr" ng-repeat="item in modelArr track by $index">
 			<span ng-if="objectProperty == undefined || objectProperty == ''">
-				{{item}} <span class="remove" ng-click="removeAddedValues(item)">
+				{{item}}<span class="remove" ng-click="removeAddedValues(item)">
                 <i class="glyphicon glyphicon-remove"></i></span>&nbsp;
 			</span>
             <span ng-if="objectProperty != undefined && objectProperty != ''">
@@ -15,25 +29,27 @@
             <input name="{{name}}" ng-model="inputValue" placeholder="请输入或选择" ng-keydown="keyParser($event)"
                    err-msg-required="{{errMsgRequired}}"
                    ng-focus="onFocus()" ng-blur="onBlur()" ng-required="!modelArr.length && isRequired"
-                    ng-change="onChange()">
+                   ng-change="onChange()">
         </li>
     </ul>
 
-    <div class="autocomplete-list" ng-show="isFocused || isHover" ng-mouseenter="onMouseEnter()" ng-mouseleave="onMouseLeave()">
-    <ul ng-if="objectProperty == undefined || objectProperty == ''">
-        <li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
-            ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues"
-            ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
-            {{suggestion}}
-        </li>
-    </ul>
-    <ul ng-if="objectProperty != undefined && objectProperty != ''">
-        <li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
-            ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues"
-            ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
-            {{suggestion[objectProperty]}}<span ng-if="repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1">({{suggestion[remarkProperty] || '无'}})</span>
-        </li>
-    </ul>
-</div>
+    <div class="autocomplete-list" ng-show="isFocused || isHover" ng-mouseenter="onMouseEnter()"
+         ng-mouseleave="onMouseLeave()">
+        <ul ng-if="objectProperty == undefined || objectProperty == ''">
+            <li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
+                ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues"
+                ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
+                {{suggestion}}
+            </li>
+        </ul>
+        <ul ng-if="objectProperty != undefined && objectProperty != ''">
+            <li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
+                ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues track by $index"
+                ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
+                {{suggestion[objectProperty]}}<span
+                    ng-if="repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1">({{suggestion[remarkProperty] || '无'}})</span>
+            </li>
+        </ul>
+    </div>
 
 </div>

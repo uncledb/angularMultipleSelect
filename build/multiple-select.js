@@ -1,4 +1,4 @@
-angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\">\n    <ul class=\"list-inline\">\n        <li ng-repeat=\"item in modelArr\">\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\n				{{item}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\n				{{item[objectProperty]}} {{repeatArr && (repeatArr.indexOf(item[objectProperty]) !== -1 ? \'(\' + (item[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n        </li>\n        <li>\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"请输入或选择\" ng-keydown=\"keyParser($event)\"\n                   err-msg-required=\"{{errMsgRequired}}\"\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\n                    ng-change=\"onChange()\">\n        </li>\n    </ul>\n\n    <div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\" ng-mouseleave=\"onMouseLeave()\">\n    <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n            {{suggestion}}\n        </li>\n    </ul>\n    <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n            {{suggestion[objectProperty]}}<span ng-if=\"repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1\">({{suggestion[remarkProperty] || \'无\'}})</span>\n        </li>\n    </ul>\n</div>\n\n</div>\n");}]);
+angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\">\n    <ul class=\"list-inline\">\n        <li ng-if=\"isSingleChoose && modelArr\">\n            <span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\n				{{modelArr}}\n                <span class=\"remove\" ng-click=\"removeAddedValues(modelArr)\">\n                    <i class=\"glyphicon glyphicon-remove\"></i>\n                </span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\' && modelArr[objectProperty]\">\n				{{modelArr[objectProperty]}} {{repeatArr && (repeatArr.indexOf(modelArr[objectProperty]) !== -1 ? \'(\' + (modelArr[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span class=\"remove\" ng-click=\"removeAddedValues(modelArr)\">\n                     <i class=\"glyphicon glyphicon-remove\"></i>\n                </span>&nbsp;\n			</span>\n        </li>\n        <li ng-if=\"!isSingleChoose && modelArr\" ng-repeat=\"item in modelArr track by $index\">\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\n				{{item}}<span class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\n				{{item[objectProperty]}} {{repeatArr && (repeatArr.indexOf(item[objectProperty]) !== -1 ? \'(\' + (item[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n        </li>\n        <li>\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"请输入或选择112\" ng-keydown=\"keyParser($event)\"\n                   err-msg-required=\"{{errMsgRequired}}\"\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\n                   ng-change=\"onChange()\">\n        </li>\n    </ul>\n\n    <div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\"\n         ng-mouseleave=\"onMouseLeave()\">\n        <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\n            <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n                ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\n                ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n                {{suggestion}}\n            </li>\n        </ul>\n        <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\n            <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n                ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues track by $index\"\n                ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n                {{suggestion[objectProperty]}}<span\n                    ng-if=\"repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1\">({{suggestion[remarkProperty] || \'无\'}})</span>\n            </li>\n        </ul>\n    </div>\n\n</div>\n");}]);
 (function () {
     //declare all modules and their dependencies.
     angular.module('multipleSelect', [
@@ -10,191 +10,208 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 )();
 (function () {
 
-    angular.module('multipleSelect').directive('multipleAutocomplete', [
-        '$filter',
-        '$http',
-        '$timeout',
-        function ($filter, $http, $timeout) {
-            return {
-                restrict: 'EA',
-                scope: {
-                    suggestionsArr: '=',
-                    modelArr: '=ngModel',
-                    apiUrl: '@'
-                },
-                templateUrl: 'multiple-autocomplete-tpl.html',
-                link: function (scope, element, attr) {
-                    scope.objectProperty = attr.objectProperty;
-                    //dongbin 备注 比如人员需要显示手机号 //objectProperty重复的时候 显示remarkProperty
-                    scope.remarkProperty = attr.remarkProperty;
-                    if (scope.remarkProperty) {
-                        $timeout(function () {
-                            scope.repeatArr = getRepeatItemsInArray(scope.suggestionsArr, scope.objectProperty);
-                        }, 2000);
-                    }
+	angular.module('multipleSelect').directive('multipleAutocomplete', [
+		'$filter',
+		'$http',
+		'$timeout',
+		function ($filter, $http, $timeout) {
+			return {
+				restrict: 'EA',
+				scope: {
+					suggestionsArr: '=',
+					modelArr: '=ngModel',
+					apiUrl: '@',
+					isSingleChoose: '='
+				},
+				templateUrl: 'multiple-autocomplete-tpl.html',
+				link: function (scope, element, attr) {
+					scope.objectProperty = attr.objectProperty;
+					//dongbin 备注 比如人员需要显示手机号 //objectProperty重复的时候 显示remarkProperty
+					scope.remarkProperty = attr.remarkProperty;
+					if (scope.remarkProperty) {
+						$timeout(function () {
+							scope.repeatArr = getRepeatItemsInArray(scope.suggestionsArr, scope.objectProperty);
+						}, 2000);
+					}
 
-                    scope.selectedItemIndex = 0;
-                    scope.name = attr.name;
-                    scope.isRequired = attr.required;
-                    scope.errMsgRequired = attr.errMsgRequired;
-                    scope.isHover = false;
-                    scope.isFocused = false;
-                    var getSuggestionsList = function () {
-                        var url = scope.apiUrl;
-                        $http({
-                            method: 'GET',
-                            url: url
-                        }).then(function (response) {
-                            scope.suggestionsArr = response.data;
-                        }, function (response) {
-                            console.log("*****Angular-multiple-select **** ----- Unable to fetch list");
-                        });
-                    };
+					scope.selectedItemIndex = 0;
+					scope.name = attr.name;
+					scope.isRequired = attr.required;
+					scope.errMsgRequired = attr.errMsgRequired;
+					scope.isHover = false;
+					scope.isFocused = false;
+					var getSuggestionsList = function () {
+						var url = scope.apiUrl;
+						$http({
+							method: 'GET',
+							url: url
+						}).then(function (response) {
+							scope.suggestionsArr = response.data;
+						}, function (response) {
+							console.log("*****Angular-multiple-select **** ----- Unable to fetch list");
+						});
+					};
 
-                    if (scope.suggestionsArr == null || scope.suggestionsArr == "") {
-                        if (scope.apiUrl != null && scope.apiUrl != "")
-                            getSuggestionsList();
-                        else {
-                            console.log("*****Angular-multiple-select **** ----- Please provide suggestion array list or url");
-                        }
-                    }
+					if (scope.suggestionsArr == null || scope.suggestionsArr == "") {
+						if (scope.apiUrl != null && scope.apiUrl != "")
+							getSuggestionsList();
+						else {
+							console.log("*****Angular-multiple-select **** ----- Please provide suggestion array list or url");
+						}
+					}
 
-                    if (scope.modelArr == null || scope.modelArr == "") {
-                        scope.modelArr = [];
-                    }
-                    scope.onFocus = function () {
-                        scope.isFocused = true
-                    };
+					if (scope.modelArr == null || scope.modelArr == "") {
+						scope.modelArr = [];
+					}
+					scope.onFocus = function () {
+						scope.isFocused = true
+					};
 
-                    scope.onMouseEnter = function () {
-                        scope.isHover = true
-                    };
+					scope.onMouseEnter = function () {
+						scope.isHover = true
+					};
 
-                    scope.onMouseLeave = function () {
-                        scope.isHover = false;
-                    };
+					scope.onMouseLeave = function () {
+						scope.isHover = false;
+					};
 
-                    scope.onBlur = function () {
-                        scope.isFocused = false;
-                    };
+					scope.onBlur = function () {
+						scope.isFocused = false;
+					};
 
-                    scope.onChange = function () {
-                        scope.selectedItemIndex = 0;
-                    };
+					scope.onChange = function () {
+						scope.selectedItemIndex = 0;
+					};
 
-                    scope.keyParser = function ($event) {
-                        var keys = {
-                            38: 'up',
-                            40: 'down',
-                            8: 'backspace',
-                            13: 'enter',
-                            9: 'tab',
-                            27: 'esc'
-                        };
-                        var key = keys[$event.keyCode];
-                        if (key == 'backspace' && scope.inputValue == "") {
-                            if (scope.modelArr.length != 0)
-                                scope.modelArr.pop();
-                        }
-                        else if (key == 'down') {
-                            var filteredSuggestionArr = $filter('filter')(scope.suggestionsArr, scope.inputValue);
-                            filteredSuggestionArr = $filter('filter')(filteredSuggestionArr, scope.alreadyAddedValues);
-                            if (scope.selectedItemIndex < filteredSuggestionArr.length - 1)
-                                scope.selectedItemIndex++;
-                        }
-                        else if (key == 'up' && scope.selectedItemIndex > 0) {
-                            scope.selectedItemIndex--;
-                        }
-                        else if (key == 'esc') {
-                            scope.isHover = false;
-                            scope.isFocused = false;
-                        }
-                        else if (key == 'enter') {
-                            var filteredSuggestionArr = $filter('filter')(scope.suggestionsArr, scope.inputValue);
-                            filteredSuggestionArr = $filter('filter')(filteredSuggestionArr, scope.alreadyAddedValues);
-                            if (scope.selectedItemIndex < filteredSuggestionArr.length)
-                                scope.onSuggestedItemsClick(filteredSuggestionArr[scope.selectedItemIndex]);
-                        }
-                    };
+					scope.keyParser = function ($event) {
+						var keys = {
+							38: 'up',
+							40: 'down',
+							8: 'backspace',
+							13: 'enter',
+							9: 'tab',
+							27: 'esc'
+						};
+						var key = keys[$event.keyCode];
+						if (key == 'backspace' && scope.inputValue == "") {
+							if (scope.isSingleChoose) {
+								scope.modelArr = null;
+							} else {
+								if (scope.modelArr.length != 0)
+									scope.modelArr.pop();
+							}
+						}
+						else if (key == 'down') {
+							var filteredSuggestionArr = $filter('filter')(scope.suggestionsArr, scope.inputValue);
+							filteredSuggestionArr = $filter('filter')(filteredSuggestionArr, scope.alreadyAddedValues);
+							if (scope.selectedItemIndex < filteredSuggestionArr.length - 1)
+								scope.selectedItemIndex++;
+						}
+						else if (key == 'up' && scope.selectedItemIndex > 0) {
+							scope.selectedItemIndex--;
+						}
+						else if (key == 'esc') {
+							scope.isHover = false;
+							scope.isFocused = false;
+						}
+						else if (key == 'enter') {
+							var filteredSuggestionArr = $filter('filter')(scope.suggestionsArr, scope.inputValue);
+							filteredSuggestionArr = $filter('filter')(filteredSuggestionArr, scope.alreadyAddedValues);
+							if (scope.selectedItemIndex < filteredSuggestionArr.length)
+								scope.onSuggestedItemsClick(filteredSuggestionArr[scope.selectedItemIndex]);
+						}
+					};
 
-                    scope.onSuggestedItemsClick = function (selectedValue) {
-                        scope.modelArr.push(selectedValue);
-                        scope.inputValue = "";
-                    };
+					scope.onSuggestedItemsClick = function (selectedValue) {
+						if (scope.isSingleChoose) {
+							scope.modelArr = selectedValue;
+							scope.isHover = false;
+							scope.isFocused = false;
+							console.log(scope.modelArr);
 
-                    var isDuplicate = function (arr, item) {
-                        var duplicate = false;
-                        if (arr == null || arr == "")
-                            return duplicate;
+						} else {
+							scope.modelArr.push(selectedValue);
+						}
+						scope.inputValue = "";
+					};
 
-                        for (var i = 0; i < arr.length; i++) {
-                            duplicate = angular.equals(arr[i], item);
-                            if (duplicate)
-                                break;
-                        }
-                        return duplicate;
-                    };
+					var isDuplicate = function (arr, item) {
+						var duplicate = false;
+						if (arr == null || arr == "")
+							return duplicate;
 
-                    scope.alreadyAddedValues = function (item) {
-                        var isAdded = true;
-                        isAdded = !isDuplicate(scope.modelArr, item);
-                        //if(scope.modelArr != null && scope.modelArr != ""){
-                        //    isAdded = scope.modelArr.indexOf(item) == -1;
-                        //    console.log("****************************");
-                        //    console.log(item);
-                        //    console.log(scope.modelArr);
-                        //    console.log(isAdded);
-                        //}
-                        return isAdded;
-                    };
+						for (var i = 0; i < arr.length; i++) {
+							duplicate = angular.equals(arr[i], item);
+							if (duplicate)
+								break;
+						}
+						return duplicate;
+					};
 
-                    scope.removeAddedValues = function (item) {
-                        if (scope.modelArr != null && scope.modelArr != "") {
-                            var itemIndex = scope.modelArr.indexOf(item);
-                            if (itemIndex != -1)
-                                scope.modelArr.splice(itemIndex, 1);
-                        }
-                    };
+					scope.alreadyAddedValues = function (item) {
+						var isAdded = true;
+						isAdded = !isDuplicate(scope.modelArr, item);
+						//if(scope.modelArr != null && scope.modelArr != ""){
+						//    isAdded = scope.modelArr.indexOf(item) == -1;
+						//    console.log("****************************");
+						//    console.log(item);
+						//    console.log(scope.modelArr);
+						//    console.log(isAdded);
+						//}
+						return isAdded;
+					};
 
-                    scope.mouseEnterOnItem = function (index) {
-                        scope.selectedItemIndex = index;
-                    };
+					scope.removeAddedValues = function (item) {
+						if (scope.isSingleChoose) {
+							scope.modelArr = null;
+						} else {
+							if (scope.modelArr != null && scope.modelArr != "") {
+								var itemIndex = scope.modelArr.indexOf(item);
+								if (itemIndex != -1)
+									scope.modelArr.splice(itemIndex, 1);
+							}
+						}
+					};
 
-                    /**
-                     * 获取重名 dongbin
-                     * @param arr
-                     * @param column
-                     * @returns {Array}
-                     */
-                    function getRepeatItemsInArray(arr, column) {
-                        var newArr = [];
-                        var repetitionArr = [];
-                        var i = 0;
-                        if (column) {//对象数组
-                            for (i = 0; i < arr.length; i++) {
-                                if (newArr.indexOf(arr[i][column]) == -1) {
-                                    newArr.push(arr[i][column])
-                                } else {
-                                    if (repetitionArr.indexOf(arr[i][column]) == -1) {
-                                        repetitionArr.push(arr[i][column])
-                                    }
-                                }
-                            }
-                        } else {
-                            for (i = 0; i < arr.length; i++) {
-                                if (newArr.indexOf(arr[i]) == -1) {
-                                    newArr.push(arr[i])
-                                } else {
-                                    if (repetitionArr.indexOf(arr[i]) == -1) {
-                                        repetitionArr.push(arr[i])
-                                    }
-                                }
-                            }
-                        }
-                        return repetitionArr;
-                    }
-                }
-            };
-        }
-    ]);
+					scope.mouseEnterOnItem = function (index) {
+						scope.selectedItemIndex = index;
+					};
+
+					/**
+					 * 获取重名 dongbin
+					 * @param arr
+					 * @param column
+					 * @returns {Array}
+					 */
+					function getRepeatItemsInArray(arr, column) {
+						var newArr = [];
+						var repetitionArr = [];
+						var i = 0;
+						if (column) {//对象数组
+							for (i = 0; i < arr.length; i++) {
+								if (newArr.indexOf(arr[i][column]) == -1) {
+									newArr.push(arr[i][column])
+								} else {
+									if (repetitionArr.indexOf(arr[i][column]) == -1) {
+										repetitionArr.push(arr[i][column])
+									}
+								}
+							}
+						} else {
+							for (i = 0; i < arr.length; i++) {
+								if (newArr.indexOf(arr[i]) == -1) {
+									newArr.push(arr[i])
+								} else {
+									if (repetitionArr.indexOf(arr[i]) == -1) {
+										repetitionArr.push(arr[i])
+									}
+								}
+							}
+						}
+						return repetitionArr;
+					}
+				}
+			};
+		}
+	]);
 })();
