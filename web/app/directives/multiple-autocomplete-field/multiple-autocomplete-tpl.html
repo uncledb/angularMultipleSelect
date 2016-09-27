@@ -1,32 +1,41 @@
 <div class="ng-ms form-item-container">
     <ul class="list-inline">
         <li ng-if="isSingleChoose && modelArr">
-            <span ng-if="objectProperty == undefined || objectProperty == ''">
+            <span ng-if="objectProperty == undefined || objectProperty == ''"
+                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+            >
 				{{modelArr}}
-                <span class="remove" ng-click="removeAddedValues(modelArr)">
+                <span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(modelArr)">
                     <i class="glyphicon glyphicon-remove"></i>
                 </span>&nbsp;
 			</span>
-            <span ng-if="objectProperty != undefined && objectProperty != '' && modelArr[objectProperty]">
+            <span ng-if="objectProperty != undefined && objectProperty != '' && modelArr[objectProperty]"
+                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+            >
 				{{modelArr[objectProperty]}} {{repeatArr && (repeatArr.indexOf(modelArr[objectProperty]) !== -1 ? '(' + (modelArr[remarkProperty] || '无') + ')' : '' ) }}
-                <span class="remove" ng-click="removeAddedValues(modelArr)">
+                <span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(modelArr)">
                      <i class="glyphicon glyphicon-remove"></i>
                 </span>&nbsp;
 			</span>
         </li>
         <li ng-if="!isSingleChoose && modelArr" ng-repeat="item in modelArr track by $index">
-			<span ng-if="objectProperty == undefined || objectProperty == ''">
-				{{item}}<span class="remove" ng-click="removeAddedValues(item)">
+			<span ng-if="objectProperty == undefined || objectProperty == ''"
+                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+            >
+				{{item}}<span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(item)">
                 <i class="glyphicon glyphicon-remove"></i></span>&nbsp;
 			</span>
-            <span ng-if="objectProperty != undefined && objectProperty != ''">
+            <span ng-if="objectProperty != undefined && objectProperty != ''"
+                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+            >
 				{{item[objectProperty]}} {{repeatArr && (repeatArr.indexOf(item[objectProperty]) !== -1 ? '(' + (item[remarkProperty] || '无') + ')' : '' ) }}
-                <span class="remove" ng-click="removeAddedValues(item)">
+                <span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(item)">
                 <i class="glyphicon glyphicon-remove"></i></span>&nbsp;
 			</span>
         </li>
         <li>
             <input name="{{name}}" ng-model="inputValue" placeholder="请输入或选择" ng-keydown="keyParser($event)"
+                   style="width: 100px;"
                    err-msg-required="{{errMsgRequired}}"
                    ng-focus="onFocus()" ng-blur="onBlur()" ng-required="!modelArr.length && isRequired"
                    ng-change="onChange()">

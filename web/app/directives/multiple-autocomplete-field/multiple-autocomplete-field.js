@@ -38,7 +38,7 @@
 						}).then(function (response) {
 							scope.suggestionsArr = response.data;
 						}, function (response) {
-							console.log("*****Angular-multiple-select **** ----- Unable to fetch list");
+							// console.log("*****Angular-multiple-select **** ----- Unable to fetch list");
 						});
 					};
 
@@ -46,12 +46,14 @@
 						if (scope.apiUrl != null && scope.apiUrl != "")
 							getSuggestionsList();
 						else {
-							console.log("*****Angular-multiple-select **** ----- Please provide suggestion array list or url");
+							// console.log("*****Angular-multiple-select **** ----- Please provide suggestion array list or url");
 						}
 					}
 
 					if (scope.modelArr == null || scope.modelArr == "") {
-						scope.modelArr = [];
+						if(!scope.isSingleChoose){
+							scope.modelArr = [];
+						}
 					}
 					scope.onFocus = function () {
 						scope.isFocused = true
@@ -117,7 +119,7 @@
 							scope.modelArr = selectedValue;
 							scope.isHover = false;
 							scope.isFocused = false;
-							console.log(scope.modelArr);
+							// console.log(scope.modelArr);
 
 						} else {
 							scope.modelArr.push(selectedValue);
