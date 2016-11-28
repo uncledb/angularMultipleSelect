@@ -33,7 +33,7 @@
                 <i class="glyphicon glyphicon-remove"></i></span>&nbsp;
 			</span>
         </li>
-        <li ng-init="ph = '请输入或选择'">
+        <li ng-init="ph = ''">
             <input name="{{name}}" ng-model="inputValue" placeholder="{{ph}}"
                    ng-keydown="keyParser($event)"
                    ng-mouseenter="ph='请输入或选择'"
