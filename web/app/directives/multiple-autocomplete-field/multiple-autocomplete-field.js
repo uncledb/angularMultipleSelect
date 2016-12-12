@@ -11,6 +11,7 @@
 					suggestionsArr: '=',
 					modelArr: '=ngModel',
 					apiUrl: '@',
+					apiParams: '@',
 					isSingleChoose: '='
 				},
 				templateUrl: 'multiple-autocomplete-tpl.html',
@@ -30,13 +31,32 @@
 					scope.errMsgRequired = attr.errMsgRequired;
 					scope.isHover = false;
 					scope.isFocused = false;
+
+					if (scope.apiParams) {
+						scope.apiParams = JSON.parse(scope.apiParams);
+					} else {
+						scope.apiParams = {key: '', pagenum: 1, countperpage: 50};
+					}
 					var getSuggestionsList = function () {
-						var url = scope.apiUrl;
+						if (scope.busy) {
+							return false;
+						}
+						scope.busy = true;
+
+						var url = scope.apiUrl || '/';
 						$http({
 							method: 'GET',
-							url: url
+							url: url,
+							params: {param: JSON.stringify(scope.apiParams)}
 						}).then(function (response) {
-							scope.suggestionsArr = response.data;
+							response = response.data;
+							if (angular.isArray(scope.suggestionsArr)) {
+								scope.suggestionsArr.concat(response);
+							} else {
+								scope.suggestionsArr = response;
+							}
+							scope.apiParams.pagenum += 1;
+							scope.busy = false;
 						}, function (response) {
 							// console.log("*****Angular-multiple-select **** ----- Unable to fetch list");
 						});
@@ -49,9 +69,11 @@
 							// console.log("*****Angular-multiple-select **** ----- Please provide suggestion array list or url");
 						}
 					}
+					scope.busy = false;
+					scope.loadMore = getSuggestionsList;
 
 					if (scope.modelArr == null || scope.modelArr == "") {
-						if(!scope.isSingleChoose){
+						if (!scope.isSingleChoose) {
 							scope.modelArr = [];
 						}
 					}
