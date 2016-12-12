@@ -1,8 +1,9 @@
-angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\" ng-init=\"ph = \'\'\">\n    <ul class=\"list-inline\"\n        ng-mouseenter=\"ph=\'请输入或选择\'\"\n        ng-mouseleave=\"ph=\'\'\">\n        <li ng-if=\"isSingleChoose && modelArr\">\n            <span ng-if=\"objectProperty == undefined || objectProperty == \'\'\"\n                  ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n            >\n				{{modelArr}}\n                <span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(modelArr)\">\n                    <i class=\"glyphicon glyphicon-remove\"></i>\n                </span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\' && modelArr[objectProperty]\"\n                  ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n            >\n				{{modelArr[objectProperty]}} {{repeatArr && (repeatArr.indexOf(modelArr[objectProperty]) !== -1 ? \'(\' + (modelArr[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(modelArr)\">\n                     <i class=\"glyphicon glyphicon-remove\"></i>\n                </span>&nbsp;\n			</span>\n        </li>\n        <li ng-if=\"!isSingleChoose && modelArr\" ng-repeat=\"item in modelArr track by $index\">\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\"\n                  ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n            >\n				{{item}}<span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\"\n                  ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n            >\n				{{item[objectProperty]}} {{repeatArr && (repeatArr.indexOf(item[objectProperty]) !== -1 ? \'(\' + (item[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n        </li>\n        <li>\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"{{ph}}\"\n                   ng-keydown=\"keyParser($event)\"\n                   style=\"width: 100px;\"\n                   err-msg-required=\"{{errMsgRequired}}\"\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\n                   ng-change=\"onChange()\">\n        </li>\n    </ul>\n\n    <div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\"\n         ng-mouseleave=\"onMouseLeave()\">\n        <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\n            <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n                ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\n                ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n                {{suggestion}}\n            </li>\n        </ul>\n        <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\n            <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n                ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues track by $index\"\n                ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n                {{suggestion[objectProperty]}}<span\n                    ng-if=\"repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1\">({{suggestion[remarkProperty] || \'无\'}})</span>\n            </li>\n        </ul>\n    </div>\n\n</div>\n");}]);
+angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\" ng-init=\"ph = \'\'\">\n	<ul class=\"list-inline\"\n			ng-mouseenter=\"ph=\'请输入或选择\'\"\n			ng-mouseleave=\"ph=\'\'\">\n		<li ng-if=\"isSingleChoose && modelArr\">\n            <span ng-if=\"objectProperty == undefined || objectProperty == \'\'\"\n									ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n						>\n				{{modelArr}}\n                <span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(modelArr)\">\n                    <i class=\"glyphicon glyphicon-remove\"></i>\n                </span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\' && modelArr[objectProperty]\"\n									ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n						>\n				{{modelArr[objectProperty]}} {{repeatArr && (repeatArr.indexOf(modelArr[objectProperty]) !== -1 ? \'(\' + (modelArr[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(modelArr)\">\n                     <i class=\"glyphicon glyphicon-remove\"></i>\n                </span>&nbsp;\n			</span>\n		</li>\n		<li ng-if=\"!isSingleChoose && modelArr\" ng-repeat=\"item in modelArr track by $index\">\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\"\n						ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n			>\n				{{item}}<span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\"\n									ng-mouseover=\"showDeleleIcon = true\" ng-mouseleave=\"showDeleleIcon = false\"\n						>\n				{{item[objectProperty]}} {{repeatArr && (repeatArr.indexOf(item[objectProperty]) !== -1 ? \'(\' + (item[remarkProperty] || \'无\') + \')\' : \'\' ) }}\n                <span ng-show=\"showDeleleIcon\" class=\"remove\" ng-click=\"removeAddedValues(item)\">\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\n			</span>\n		</li>\n		<li>\n			<input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"{{ph}}\"\n						 ng-keydown=\"keyParser($event)\"\n						 style=\"width: 100px;\"\n						 err-msg-required=\"{{errMsgRequired}}\"\n						 ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\n						 ng-change=\"onChange()\">\n		</li>\n	</ul>\n\n	<div class=\"autocomplete-list\"\n			 ng-show=\"isFocused || isHover\"\n			 ng-mouseenter=\"onMouseEnter()\"\n			 ng-mouseleave=\"onMouseLeave()\">\n		<ul\n				ng-if=\"objectProperty == undefined || objectProperty == \'\'\"\n				infinite-scroll=\"loadMore()\"\n				infinite-scroll-parent=\"true\">\n			<li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n					ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\n					ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n				{{suggestion}}\n			</li>\n		</ul>\n		<ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\"\n				infinite-scroll=\"loadMore()\"\n				infinite-scroll-parent=\"true\">\n			<li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\n					ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues track by $index\"\n					ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\n				{{suggestion[objectProperty]}}<span\n				ng-if=\"repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1\">({{suggestion[remarkProperty] || \'无\'}})</span>\n			</li>\n		</ul>\n		<span ng-show=\"busy\">正在加载...</span>\n	</div>\n\n</div>\n");}]);
 (function () {
     //declare all modules and their dependencies.
     angular.module('multipleSelect', [
-        'templates'
+        'templates',
+	      'infinite-scroll'
     ]).config(function () {
 
     });
@@ -21,6 +22,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					suggestionsArr: '=',
 					modelArr: '=ngModel',
 					apiUrl: '@',
+					apiParams: '@',
 					isSingleChoose: '='
 				},
 				templateUrl: 'multiple-autocomplete-tpl.html',
@@ -40,13 +42,32 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					scope.errMsgRequired = attr.errMsgRequired;
 					scope.isHover = false;
 					scope.isFocused = false;
+
+					if (scope.apiParams) {
+						scope.apiParams = JSON.parse(scope.apiParams);
+					} else {
+						scope.apiParams = {key: '', pagenum: 1, countperpage: 50};
+					}
 					var getSuggestionsList = function () {
-						var url = scope.apiUrl;
+						if (scope.busy) {
+							return false;
+						}
+						scope.busy = true;
+
+						var url = scope.apiUrl || '/';
 						$http({
 							method: 'GET',
-							url: url
+							url: url,
+							params: {param: JSON.stringify(scope.apiParams)}
 						}).then(function (response) {
-							scope.suggestionsArr = response.data;
+							response = response.data;
+							if (angular.isArray(scope.suggestionsArr)) {
+								scope.suggestionsArr.concat(response);
+							} else {
+								scope.suggestionsArr = response;
+							}
+							scope.apiParams.pagenum += 1;
+							scope.busy = false;
 						}, function (response) {
 							// console.log("*****Angular-multiple-select **** ----- Unable to fetch list");
 						});
@@ -59,9 +80,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 							// console.log("*****Angular-multiple-select **** ----- Please provide suggestion array list or url");
 						}
 					}
+					scope.busy = false;
+					scope.loadMore = getSuggestionsList;
 
 					if (scope.modelArr == null || scope.modelArr == "") {
-						if(!scope.isSingleChoose){
+						if (!scope.isSingleChoose) {
 							scope.modelArr = [];
 						}
 					}

@@ -1,67 +1,77 @@
 <div class="ng-ms form-item-container" ng-init="ph = ''">
-    <ul class="list-inline"
-        ng-mouseenter="ph='请输入或选择'"
-        ng-mouseleave="ph=''">
-        <li ng-if="isSingleChoose && modelArr">
+	<ul class="list-inline"
+			ng-mouseenter="ph='请输入或选择'"
+			ng-mouseleave="ph=''">
+		<li ng-if="isSingleChoose && modelArr">
             <span ng-if="objectProperty == undefined || objectProperty == ''"
-                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
-            >
+									ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+						>
 				{{modelArr}}
                 <span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(modelArr)">
                     <i class="glyphicon glyphicon-remove"></i>
                 </span>&nbsp;
 			</span>
             <span ng-if="objectProperty != undefined && objectProperty != '' && modelArr[objectProperty]"
-                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
-            >
+									ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+						>
 				{{modelArr[objectProperty]}} {{repeatArr && (repeatArr.indexOf(modelArr[objectProperty]) !== -1 ? '(' + (modelArr[remarkProperty] || '无') + ')' : '' ) }}
                 <span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(modelArr)">
                      <i class="glyphicon glyphicon-remove"></i>
                 </span>&nbsp;
 			</span>
-        </li>
-        <li ng-if="!isSingleChoose && modelArr" ng-repeat="item in modelArr track by $index">
+		</li>
+		<li ng-if="!isSingleChoose && modelArr" ng-repeat="item in modelArr track by $index">
 			<span ng-if="objectProperty == undefined || objectProperty == ''"
-                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
-            >
+						ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+			>
 				{{item}}<span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(item)">
                 <i class="glyphicon glyphicon-remove"></i></span>&nbsp;
 			</span>
             <span ng-if="objectProperty != undefined && objectProperty != ''"
-                  ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
-            >
+									ng-mouseover="showDeleleIcon = true" ng-mouseleave="showDeleleIcon = false"
+						>
 				{{item[objectProperty]}} {{repeatArr && (repeatArr.indexOf(item[objectProperty]) !== -1 ? '(' + (item[remarkProperty] || '无') + ')' : '' ) }}
                 <span ng-show="showDeleleIcon" class="remove" ng-click="removeAddedValues(item)">
                 <i class="glyphicon glyphicon-remove"></i></span>&nbsp;
 			</span>
-        </li>
-        <li>
-            <input name="{{name}}" ng-model="inputValue" placeholder="{{ph}}"
-                   ng-keydown="keyParser($event)"
-                   style="width: 100px;"
-                   err-msg-required="{{errMsgRequired}}"
-                   ng-focus="onFocus()" ng-blur="onBlur()" ng-required="!modelArr.length && isRequired"
-                   ng-change="onChange()">
-        </li>
-    </ul>
+		</li>
+		<li>
+			<input name="{{name}}" ng-model="inputValue" placeholder="{{ph}}"
+						 ng-keydown="keyParser($event)"
+						 style="width: 100px;"
+						 err-msg-required="{{errMsgRequired}}"
+						 ng-focus="onFocus()" ng-blur="onBlur()" ng-required="!modelArr.length && isRequired"
+						 ng-change="onChange()">
+		</li>
+	</ul>
 
-    <div class="autocomplete-list" ng-show="isFocused || isHover" ng-mouseenter="onMouseEnter()"
-         ng-mouseleave="onMouseLeave()">
-        <ul ng-if="objectProperty == undefined || objectProperty == ''">
-            <li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
-                ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues"
-                ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
-                {{suggestion}}
-            </li>
-        </ul>
-        <ul ng-if="objectProperty != undefined && objectProperty != ''">
-            <li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
-                ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues track by $index"
-                ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
-                {{suggestion[objectProperty]}}<span
-                    ng-if="repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1">({{suggestion[remarkProperty] || '无'}})</span>
-            </li>
-        </ul>
-    </div>
+	<div class="autocomplete-list"
+			 ng-show="isFocused || isHover"
+			 ng-mouseenter="onMouseEnter()"
+			 ng-mouseleave="onMouseLeave()">
+		<ul
+				ng-if="objectProperty == undefined || objectProperty == ''"
+				infinite-scroll="loadMore()"
+				infinite-scroll-distance="busy"
+				infinite-scroll-parent="true">
+			<li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
+					ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues"
+					ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
+				{{suggestion}}
+			</li>
+		</ul>
+		<ul ng-if="objectProperty != undefined && objectProperty != ''"
+				infinite-scroll="loadMore()"
+				infinite-scroll-distance="busy"
+				infinite-scroll-parent="true">
+			<li ng-class="{'autocomplete-active' : selectedItemIndex == $index}"
+					ng-repeat="suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues track by $index"
+					ng-click="onSuggestedItemsClick(suggestion)" ng-mouseenter="mouseEnterOnItem($index)">
+				{{suggestion[objectProperty]}}<span
+				ng-if="repeatArr && repeatArr.indexOf(suggestion[objectProperty])!== -1">({{suggestion[remarkProperty] || '无'}})</span>
+			</li>
+		</ul>
+		<span ng-show="busy">正在加载...</span>
+	</div>
 
 </div>
